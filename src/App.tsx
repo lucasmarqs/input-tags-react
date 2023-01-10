@@ -1,25 +1,37 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import styled from '@emotion/styled'
+
+import TagsManagementForm from './tags-management-form';
+
+const MainInterface = styled.main`
+  padding: 1.5em;
+`;
+
+const HeaderH1 = styled.h1`
+  margin-bottom: 1.2em;
+  small {
+    font-size: 0.75em;
+    color: lightslategray;
+    &::before {
+      content: ' ';
+    }
+  }
+`
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+    <MainInterface>
+      <header id="header">
+        <HeaderH1>
+          Welcome!
+          <small>Tag management form</small>
+        </HeaderH1>
       </header>
-    </div>
+
+      <article>
+        <TagsManagementForm />
+      </article>
+    </MainInterface>
   );
 }
 
