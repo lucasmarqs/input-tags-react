@@ -1,4 +1,7 @@
 import React, { useState } from 'react';
+import styled from '@emotion/styled';
+import Input from './Input';
+import Button from './Button';
 
 function normalizeTag(val: string): string {
   return val.trim();
@@ -12,15 +15,47 @@ function createSlugFor(tag: string): string {
 
 type Tags = Record<string, string>;
 
+const FormWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+  max-width: 380px;
+  align-items: flex-start;
+`;
+
+const TagsList = styled.ul`
+  padding-left: 0;
+  display: flex;
+  list-style: none;
+  max-width: 380px;
+  flex-wrap: wrap;
+
+  li {
+    margin: 4px;
+    background-color: lightgray;
+    padding: 6px 4px;
+    border-radius: 4px;
+    color: black;
+
+    &::before {
+      content: '#';
+    }
+  }
+`;
+
 export const TagsManagementForm = () => {
   const [tags, setTags] = useState<Tags>({});
   const [tagField, setTagField] = useState<string>('');
 
   return (
     <React.Fragment>
-      <input
+      <FormWrapper>
+      <Input
         type="text"
         name="tag"
+        autoComplete="off"
+        aria-label="Enter tag name"
+        placeholder="Enter tag name..."
         onChange={(event) => {
           setTagField(event.currentTarget.value)
         }}
@@ -32,13 +67,13 @@ export const TagsManagementForm = () => {
         value={tagField}
       />
 
-      <button
+      <Button
         id="addTagButton"
+        aria-label="Add tag"
         type="button"
         onClick={() => {
           const tag = normalizeTag(tagField);
           if (tag.length == 0) return;
-
           const slug = createSlugFor(tag);
           const updatedValue = {} as Tags;
           updatedValue[slug] = tag;
@@ -47,15 +82,16 @@ export const TagsManagementForm = () => {
         }}
       >
         Add
-      </button>
+      </Button>
+      </FormWrapper>
 
-      <ul>
+      <TagsList>
         {Object.keys(tags).map((slug: string) => {
           return (
             <li key={slug}>{tags[slug]}</li>
           );
         })}
-      </ul>
+      </TagsList>
 
     </React.Fragment>
   );
