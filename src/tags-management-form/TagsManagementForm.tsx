@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { MouseEventHandler, useState } from 'react';
 import styled from '@emotion/styled';
 import Input from './Input';
 import Button from './Button';
+import TagItem from './TagItem';
 
 function normalizeTag(val: string): string {
   return val.trim();
@@ -47,52 +48,66 @@ export const TagsManagementForm = () => {
   const [tags, setTags] = useState<Tags>({});
   const [tagField, setTagField] = useState<string>('');
 
+  function deleteTagBySlug(slug: string): MouseEventHandler {
+    return function () {
+      if (window.confirm(`Do you want to delete the tag ${tags[slug]}?`)) {
+        setTags((prev) => {
+          const updatedTags = { ...prev }
+          delete updatedTags[slug];
+          return updatedTags;
+        });
+      }
+    }
+  }
+
   return (
     <React.Fragment>
       <FormWrapper>
-      <Input
-        type="text"
-        name="tag"
-        autoComplete="off"
-        aria-label="Enter tag name"
-        placeholder="Enter tag name..."
-        onChange={(event) => {
-          setTagField(event.currentTarget.value)
-        }}
-        onKeyUp={(event) => {
-          if (event.key !== 'Enter') return;
-          event.preventDefault();
-          document.getElementById('addTagButton')?.click();
-        }}
-        value={tagField}
-      />
+        <Input
+          type="text"
+          name="tag"
+          autoComplete="off"
+          aria-label="Enter tag name"
+          placeholder="Enter tag name..."
+          onChange={(event) => {
+            setTagField(event.currentTarget.value)
+          }}
+          onKeyUp={(event) => {
+            if (event.key !== 'Enter') return;
+            event.preventDefault();
+            document.getElementById('addTagButton')?.click();
+          }}
+          value={tagField}
+        />
 
-      <Button
-        id="addTagButton"
-        aria-label="Add tag"
-        type="button"
-        onClick={() => {
-          const tag = normalizeTag(tagField);
-          if (tag.length == 0) return;
-          const slug = createSlugFor(tag);
-          const updatedValue = {} as Tags;
-          updatedValue[slug] = tag;
-          setTags((prev) => ({ ...prev, ...updatedValue }));
-          setTagField('');
-        }}
-      >
-        Add
-      </Button>
+        <Button
+          id="addTagButton"
+          aria-label="Add tag"
+          type="button"
+          onClick={() => {
+            const tag = normalizeTag(tagField);
+            if (tag.length == 0) return;
+            const slug = createSlugFor(tag);
+            const updatedValue = {} as Tags;
+            updatedValue[slug] = tag;
+            setTags((prev) => ({ ...prev, ...updatedValue }));
+            setTagField('');
+          }}
+        >
+          Add
+        </Button>
       </FormWrapper>
 
       <TagsList>
-        {Object.keys(tags).map((slug: string) => {
-          return (
-            <li key={slug}>{tags[slug]}</li>
-          );
-        })}
+        {Object.keys(tags).map((slug) => (
+          <TagItem
+            key={slug}
+            slug={slug}
+            text={tags[slug]}
+            deleteTagFn={deleteTagBySlug}
+          />
+        ))}
       </TagsList>
-
     </React.Fragment>
   );
 };
