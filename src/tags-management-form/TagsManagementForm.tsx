@@ -1,8 +1,9 @@
-import React, { MouseEventHandler, useState } from 'react';
+import React, { MouseEventHandler, useEffect, useState } from 'react';
 import styled from '@emotion/styled';
-import Input from './Input';
-import Button from './Button';
-import TagItem from './TagItem';
+import Input from './components/Input';
+import Button from './components/Button';
+import TagItem from './components/TagItem';
+import { getTags } from './data/api';
 
 function normalizeTag(val: string): string {
   return val.trim();
@@ -47,6 +48,22 @@ const TagsList = styled.ul`
 export const TagsManagementForm = () => {
   const [tags, setTags] = useState<Tags>({});
   const [tagField, setTagField] = useState<string>('');
+
+  useEffect(() => {
+    const loadTagsToState = async () => {
+      let loadedTags = await getTags();
+      setTags((prev) => {
+        const newTags = loadedTags.reduce((acc, current) => {
+          acc[current.slug] = current.text;
+          return acc
+        }, {} as Tags)
+
+        return { ...newTags, ...prev };
+      });
+    }
+
+    loadTagsToState();
+  }, []);
 
   function deleteTagBySlug(slug: string): MouseEventHandler {
     return function () {
