@@ -4,6 +4,7 @@ import Input from './components/Input';
 import Button from './components/Button';
 import TagItem from './components/TagItem';
 import { getTags } from './data/api';
+import ErrorTagAlreadyExists from './components/ErrorTagAlreadyExists';
 
 function normalizeTag(val: string): string {
   return val.trim();
@@ -20,10 +21,18 @@ type Tags = Record<string, string>;
 const FormWrapper = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
   max-width: 380px;
   align-items: flex-start;
+
+  input + button {
+    margin-left: 8px;
+  }
 `;
+
+const ErrorWrapper = styled.div`
+  display: flex;
+  line-height: 2em;
+`
 
 const TagsList = styled.ul`
   padding-left: 0;
@@ -48,6 +57,7 @@ const TagsList = styled.ul`
 export const TagsManagementForm = () => {
   const [tags, setTags] = useState<Tags>({});
   const [tagField, setTagField] = useState<string>('');
+  const [errorTagAlreadyExists, setErrorTagAlreadyExists] = useState(false);
 
   useEffect(() => {
     const loadTagsToState = async () => {
@@ -77,6 +87,12 @@ export const TagsManagementForm = () => {
     }
   }
 
+  function handleDuplicatedTag(slug: string) {
+    setErrorTagAlreadyExists(true);
+
+    setTagField('');
+  }
+
   return (
     <React.Fragment>
       <FormWrapper>
@@ -103,8 +119,9 @@ export const TagsManagementForm = () => {
           type="button"
           onClick={() => {
             const tag = normalizeTag(tagField);
-            if (tag.length == 0) return;
+            if (tag.length === 0) return;
             const slug = createSlugFor(tag);
+            if (slug in tags) return handleDuplicatedTag(slug);
             const updatedValue = {} as Tags;
             updatedValue[slug] = tag;
             setTags((prev) => ({ ...prev, ...updatedValue }));
@@ -114,6 +131,14 @@ export const TagsManagementForm = () => {
           Add
         </Button>
       </FormWrapper>
+
+      <ErrorWrapper>
+        <ErrorTagAlreadyExists
+          open={errorTagAlreadyExists}
+          duration={2000}
+          onClose={() => setErrorTagAlreadyExists(false)}
+        />
+      </ErrorWrapper>
 
       <TagsList>
         {Object.keys(tags).map((slug) => (

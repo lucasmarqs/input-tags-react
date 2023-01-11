@@ -4,7 +4,11 @@ import styled from '@emotion/styled'
 import TagsManagementForm from './tags-management-form';
 
 const MainInterface = styled.main`
-  padding: 1.5em;
+  padding: 0.3em;
+
+  @media (min-width: 600px) {
+    padding: 2em;
+  }
 `;
 
 const HeaderH1 = styled.h1`
