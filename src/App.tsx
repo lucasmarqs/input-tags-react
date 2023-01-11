@@ -1,41 +1,35 @@
-import React from 'react';
-import styled from '@emotion/styled'
+import { css } from '@emotion/react';
 
 import TagsManagementForm from './tags-management-form';
 
-const MainInterface = styled.main`
-  padding: 0.3em;
-
-  @media (min-width: 600px) {
-    padding: 2em;
-  }
-`;
-
-const HeaderH1 = styled.h1`
-  margin-bottom: 1.2em;
-  small {
-    font-size: 0.75em;
-    color: lightslategray;
-    &::before {
-      content: ' ';
-    }
-  }
-`
-
 function App() {
   return (
-    <MainInterface>
+    <main css={css({
+      padding: '0.3em',
+      '@media(min-width: 600px)': {
+        padding: '2em',
+      }
+    })}>
       <header id="header">
-        <HeaderH1>
+        <h1 css={css({
+          marginBottom: '1.2em',
+          small: {
+            fontSize: '0.75em',
+            color: 'lightslategray',
+            '&::before': {
+              content: '" "',
+            }
+          }
+        })}>
           Welcome!
           <small>Tag management form</small>
-        </HeaderH1>
+        </h1>
       </header>
 
       <article>
         <TagsManagementForm />
       </article>
-    </MainInterface>
+    </main>
   );
 }
 

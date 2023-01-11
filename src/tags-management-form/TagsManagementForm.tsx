@@ -1,7 +1,6 @@
 import React, { MouseEventHandler, useEffect, useState } from 'react';
-import styled from '@emotion/styled';
-import Input from './components/Input';
-import Button from './components/Button';
+import { css } from '@emotion/react';
+import * as styles from './styles';
 import TagItem from './components/TagItem';
 import { getTags } from './data/api';
 import ErrorTagAlreadyExists from './components/ErrorTagAlreadyExists';
@@ -17,42 +16,6 @@ function createSlugFor(tag: string): string {
 }
 
 type Tags = Record<string, string>;
-
-const FormWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  max-width: 380px;
-  align-items: flex-start;
-
-  input + button {
-    margin-left: 8px;
-  }
-`;
-
-const ErrorWrapper = styled.div`
-  display: flex;
-  line-height: 2em;
-`
-
-const TagsList = styled.ul`
-  padding-left: 0;
-  display: flex;
-  list-style: none;
-  max-width: 380px;
-  flex-wrap: wrap;
-
-  li {
-    margin: 4px;
-    background-color: lightgray;
-    padding: 6px 4px;
-    border-radius: 4px;
-    color: black;
-
-    &::before {
-      content: '#';
-    }
-  }
-`;
 
 export const TagsManagementForm = () => {
   const [tags, setTags] = useState<Tags>({});
@@ -95,8 +58,17 @@ export const TagsManagementForm = () => {
 
   return (
     <React.Fragment>
-      <FormWrapper>
-        <Input
+      <div css={css({
+        display: 'flex',
+        flexDirection: 'row',
+        maxWidth: '380px',
+        alignItems: 'flex-start',
+        'input + button': {
+          marginLeft: '8px',
+        }
+      })}>
+        <input
+          css={styles.input}
           type="text"
           name="tag"
           autoComplete="off"
@@ -113,7 +85,12 @@ export const TagsManagementForm = () => {
           value={tagField}
         />
 
-        <Button
+        <button
+          css={css({
+            minWidth: '4em',
+            },
+            styles.button
+          )}
           id="addTagButton"
           aria-label="Add tag"
           type="button"
@@ -129,18 +106,39 @@ export const TagsManagementForm = () => {
           }}
         >
           Add
-        </Button>
-      </FormWrapper>
+        </button>
+      </div>
 
-      <ErrorWrapper>
+      <div css={css({
+        display: 'flex',
+        lineHeight: '2em',
+      })}>
         <ErrorTagAlreadyExists
           open={errorTagAlreadyExists}
           duration={2000}
           onClose={() => setErrorTagAlreadyExists(false)}
         />
-      </ErrorWrapper>
+      </div>
 
-      <TagsList>
+      <ul css={css({
+        paddingLeft: 0,
+        display: 'flex',
+        listStyle: 'none',
+        maxWidth: '380px',
+        flexWrap: 'wrap',
+
+        li: {
+          margin: '4px',
+          backgroundColor: 'lightgray',
+          padding: '6px 4px',
+          borderRadius: '4px',
+          color: 'black',
+
+          '&::before': {
+            content: '"#"',
+          }
+        }
+      })}>
         {Object.keys(tags).map((slug) => (
           <TagItem
             key={slug}
@@ -149,7 +147,7 @@ export const TagsManagementForm = () => {
             deleteTagFn={deleteTagBySlug}
           />
         ))}
-      </TagsList>
+      </ul>
     </React.Fragment>
   );
 };
